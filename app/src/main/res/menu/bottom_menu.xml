@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/home"
+        android:title="Home"
+        android:icon="@drawable/bottom_home_icon"/>
+
+    <item android:id="@+id/news"
+        android:title="@string/news"
+        android:icon="@drawable/bottom_news_icon"/>
+
+    <item android:id="@+id/entertainment"
+        android:title="@string/entertainment"
+        android:icon="@drawable/bottom_entertainment_icon"/>
+
+    <item android:id="@+id/devotional"
+        android:title="@string/devotional"
+        android:icon="@drawable/bottom_devotional_icon"/>
+
+    <item android:id="@+id/channel"
+        android:title="@string/channel"
+        android:icon="@drawable/bottom_channle_icon"/>
+
+</menu>

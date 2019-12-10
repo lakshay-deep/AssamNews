@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@android:color/black"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/ivEntertainment"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:src="@drawable/entertainment"
+        android:background="@drawable/rounded_corner"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:scaleType="fitXY"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvEntertainment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_small"
+        app:layout_constraintTop_toBottomOf="@id/ivEntertainment"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:listitem="@layout/cell_rv" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

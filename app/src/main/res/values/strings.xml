@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">AssamNews</string>
+    <string name="channel">Channel</string>
+    <string name="entertainment">Entertainment</string>
+    <string name="devotional">Devotional</string>
+    <string name="news">News</string>
+    <string name="home">Home</string>
+    <string name="newsTimeAssam">News Time Assam</string>
+    <string name="spinner_title">Select Category</string>
+    <string name="share">Share</string>
+    <string name="whatsapp">WhatsApp</string>
+    <string name="temp">Temp</string>
+    
+    
+    <string-array name="categories">
+        <item>All</item>
+        <item>News</item>
+        <item>Entertainment</item>
+        <item>Devotional</item>
+    </string-array>
+</resources>
