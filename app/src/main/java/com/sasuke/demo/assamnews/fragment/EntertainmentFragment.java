@@ -13,8 +13,6 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.sasuke.demo.assamnews.activity.DetailEntertainmentActivity;
-import com.sasuke.demo.assamnews.activity.DetailNewsActivity;
 import com.sasuke.demo.assamnews.activity.ItemDecorator;
 import com.sasuke.demo.assamnews.R;
 import com.sasuke.demo.assamnews.activity.TemActivity;
@@ -55,7 +53,7 @@ public class EntertainmentFragment extends Fragment {
         entertainmentAdapter.setOnItemClickListener(new EntertainmentAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent(getActivity(), TemActivity.class);
+                Intent intent = new Intent(getActivity(), TempActivity.class);
                 startActivity(intent);
             }
         });

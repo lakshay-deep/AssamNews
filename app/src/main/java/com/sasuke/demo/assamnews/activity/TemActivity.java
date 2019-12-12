@@ -11,11 +11,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -35,6 +39,12 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.sasuke.demo.assamnews.R;
+import com.sasuke.demo.assamnews.adapter.DetailAdapter;
+import com.sasuke.demo.assamnews.adapter.EntertainmentAdapter;
+import com.sasuke.demo.assamnews.model.News;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TemActivity extends AppCompatActivity {
 
@@ -48,23 +58,36 @@ public class TemActivity extends AppCompatActivity {
     private Boolean isPIPModeEnabled = true;
     private PlayerView playerView;
 
+    private RecyclerView recyclerView;
+    private List<News> detailList = new ArrayList<>();
+    private DetailAdapter detailAdapter;
+
+
     //Try implementing or using butterknife here if it doesn't work
-//    private PlayerView playerView = findViewById(R.id.playerView);
-//
-//    public static Intent newIntent(Context context, String videoUrl) {
-//        Intent intent = new Intent(context, MainActivity.class);
+
+    public static Intent newIntent(Context context, String videoUrl) {
+        Intent intent = new Intent(context, MainActivity.class);
 //        intent.putExtra(EXTRA_VIDEO_URL, videoUrl);
-//        return intent;
-//    }
+        return intent;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp);
 
-         playerView = (PlayerView) findViewById(R.id.playerView);
-        mUrl ="https://editorji.akamaized.net/cue_ts/Airtel/NationalPlaylist.m3u8";
+        playerView = findViewById(R.id.playerView);
+        mUrl = "https://editorji.akamaized.net/cue_ts/Airtel/NationalPlaylist.m3u8";
 
+        recyclerView = findViewById(R.id.rvDetail);
+        detailAdapter = new DetailAdapter(detailList);
+        LinearLayoutManager eLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true);
+        recyclerView.setLayoutManager(eLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(detailAdapter);
+        recyclerView.addItemDecoration(new ItemDecorator(10)) ;
+        prepareDetailData();
+        initListener();
 
 //        if (getIntent().getExtras() == null || !getIntent().hasExtra(EXTRA_VIDEO_URL)) {
 //            finish();
@@ -77,6 +100,29 @@ public class TemActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             videoPosition = savedInstanceState.getLong(EXTRA_VIDEO_POSITION);
         }
+    }
+
+    private  void  initListener(){
+        detailAdapter.setOnItemClickListener(new DetailAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                startActivity(TemActivity.newIntent(getApplicationContext(),""));
+            }
+        });
+    }
+
+    private void prepareDetailData() {
+        News detail;
+        detail = new News("DY365", R.drawable.dy365_medium);
+        detailList.add(detail);
+        detail = new News("Aaj Tak", R.drawable.aaj_tak_medium);
+        detailList.add(detail);
+        detail = new News("PratedinTime", R.drawable.pratedin_medium);
+        detailList.add(detail);
+        detail = new News("PragNews", R.drawable.prag_news_medium);
+        detailList.add(detail);
+        detail = new News("DY365", R.drawable.dy365_medium);
+        detailList.add(detail);
     }
 
     @Override
@@ -96,18 +142,21 @@ public class TemActivity extends AppCompatActivity {
                         HlsMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(mUrl));
                 player.prepare(mediaSource);
             }
+            break;
 
             case C.TYPE_OTHER: {
                 MediaSource mediaSource = new ExtractorMediaSource.Factory(dataSourceFactory)
                         .createMediaSource(Uri.parse(mUrl));
                 player.prepare(mediaSource);
             }
+            break;
 
             default: {
                 //This is to catch SmoothStreaming and DASH types which are not supported currently
                 setResult(Activity.RESULT_CANCELED);
                 finish();
             }
+            break;
         }
         final boolean[] returnResultOnce = {true};
 
@@ -252,7 +301,7 @@ public class TemActivity extends AppCompatActivity {
             } else {
                 this.enterPictureInPictureMode();
             }
-                new Handler().postDelayed(this::checkPIPPermission, 30);
+            new Handler().postDelayed(this::checkPIPPermission, 30);
         }
     }
 

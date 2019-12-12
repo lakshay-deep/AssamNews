@@ -17,4 +17,5 @@
     <color name="toolbar">#081036</color>
     <color name="statusbar">#081036</color>
     <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
 </resources>

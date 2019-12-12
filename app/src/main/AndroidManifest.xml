@@ -22,11 +22,18 @@
         </activity>
         <activity android:name=".activity.MainActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity android:name=".activity.DetailNewsActivity"
-            android:theme="@style/AppTheme"></activity>
-        <activity android:name=".activity.DetailEntertainmentActivity"></activity>
+            android:theme="@style/AppTheme"/>
+        <activity android:name=".activity.DetailEntertainmentActivity"/>
         <activity android:name=".activity.TemActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:exported="false"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true"
+            android:theme="@style/Theme.AppCompat.FullScreen"
+            tools:targetApi="n"/>
+        <activity android:name=".activity.TempActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:resizeableActivity="true"

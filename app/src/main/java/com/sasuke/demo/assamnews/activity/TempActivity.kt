@@ -6,14 +6,25 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.media.session.MediaSessionCompat
-import android.widget.Toast
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.source.ExtractorMediaSource
@@ -24,19 +35,29 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.sasuke.demo.assamnews.R
+import com.sasuke.demo.assamnews.adapter.DetailAdapter
+import com.sasuke.demo.assamnews.adapter.ViewPagerAdapter
+import com.sasuke.demo.assamnews.model.News
 import kotlinx.android.synthetic.main.activity_temp.*
+import kotlinx.android.synthetic.main.fragment_empty.*
 
 class TempActivity : AppCompatActivity() {
 
     companion object {
+        private const val TOTAL_PAGE_COUNT = 3
         private const val EXTRA_VIDEO_URL = "EXTRA_VIDEO_URL"
         private const val EXTRA_VIDEO_POSITION = "EXTRA_VIDEO_POSITION"
         fun newIntent(context: Context, videoUrl: String): Intent {
-            val intent = Intent(context,MainActivity::class.java)
-            intent.putExtra(EXTRA_VIDEO_URL,videoUrl)
+            val intent = Intent(context, MainActivity::class.java)
+//            intent.putExtra(EXTRA_VIDEO_URL, videoUrl)
             return intent
         }
     }
+
+    private val detailList: ArrayList<News> = ArrayList()
+    private lateinit var detailAdapter: DetailAdapter
+    private lateinit var viewPagerAdapter: ViewPagerAdapter
+
 
     var isInPipMode: Boolean = false
     lateinit var mUrl: String
@@ -48,7 +69,18 @@ class TempActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_temp)
-        mUrl ="https://editorji.akamaized.net/cue_ts/Airtel/NationalPlaylist.m3u8"
+        mUrl = "https://editorji.akamaized.net/cue_ts/Airtel/NationalPlaylist.m3u8"
+        val linearLayoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        detailAdapter = DetailAdapter(detailList)
+        rvDetail.layoutManager = linearLayoutManager
+        rvDetail.adapter = detailAdapter
+        rvDetail.itemAnimator = DefaultItemAnimator()
+        rvDetail.addItemDecoration(ItemDecorator(10))
+        viewPagerAdapter = ViewPagerAdapter(supportFragmentManager, TOTAL_PAGE_COUNT)
+        vpAdvertisment.adapter = viewPagerAdapter
+        pagerIndicator.setViewPager(vpAdvertisment)
+        prepareDetailData()
+        initListener()
 //
 //        if (intent.extras == null || !intent.hasExtra(EXTRA_VIDEO_URL)) {
 //            finish()
@@ -59,6 +91,26 @@ class TempActivity : AppCompatActivity() {
 //        }
 
         savedInstanceState?.let { videoPosition = savedInstanceState.getLong(EXTRA_VIDEO_POSITION) }
+    }
+
+    private fun prepareDetailData() {
+        var detail = News("DY365", R.drawable.dy365_medium)
+        detailList.add(detail)
+        detail = News("Aaj Tak", R.drawable.aaj_tak_medium)
+        detailList.add(detail)
+        detail = News("PratedinTime", R.drawable.pratedin_medium)
+        detailList.add(detail)
+        detail = News("PragNews", R.drawable.prag_news_medium)
+        detailList.add(detail)
+        detail = News("DY365", R.drawable.dy365_medium)
+        detailList.add(detail)
+    }
+
+    private fun initListener() {
+        detailAdapter.setOnItemClickListener { view, position ->
+            //            TODO: Open whatever activity you want to open
+//            startActivity()
+        }
     }
 
     override fun onStart() {
@@ -145,6 +197,7 @@ class TempActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        pagerIndicator.visibility = View.VISIBLE
         if (videoPosition > 0L && !isInPipMode) {
             player.seekTo(videoPosition)
         }
@@ -200,6 +253,7 @@ class TempActivity : AppCompatActivity() {
 
     @Suppress("DEPRECATION")
     fun enterPIPMode() {
+        pagerIndicator.visibility = View.GONE
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
                 && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
         ) {
@@ -221,6 +275,60 @@ class TempActivity : AppCompatActivity() {
         isPIPModeEnabled = isInPictureInPictureMode
         if (!isInPictureInPictureMode) {
             onBackPressed()
+        }
+    }
+
+    //--------------EMPTY FRAGMENT FOR VIEW PAGER--------------
+
+    class EmptyFragment : Fragment() {
+
+        private var position: Int = 0
+
+        companion object {
+            private const val EXTRA_POSITION = "EXTRA_POSITION"
+            internal fun newInstance(position: Int): EmptyFragment {
+                val fragment = EmptyFragment()
+                val bundle = Bundle()
+                bundle.putInt(EXTRA_POSITION, position)
+                fragment.arguments = bundle
+                return fragment
+            }
+        }
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            arguments?.let {
+                position = it.getInt(EXTRA_POSITION, 0)
+            }
+        }
+
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+            return inflater.inflate(R.layout.fragment_empty, container, false)
+        }
+
+        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
+
+            when (position) {
+                0 -> {
+                    ivAdvertisementImage.setImageResource(R.drawable.aaj_tak_medium)
+                    tvAdvertisementText.text = "Aaj Tak Sabse Aage"
+                    tvAdvertisementText.movementMethod = LinkMovementMethod.getInstance()
+                    tvAdvertisementText.highlightColor = Color.BLUE
+                }
+                1 -> {
+                    ivAdvertisementImage.setImageResource(R.drawable.aastha_tv_medium)
+                    tvAdvertisementText.text = "Aastha ki prakshta hai dhyan"
+                    tvAdvertisementText.movementMethod = LinkMovementMethod.getInstance()
+                    tvAdvertisementText.highlightColor = Color.BLUE
+                }
+                2 -> {
+                    ivAdvertisementImage.setImageResource(R.drawable.bhakti_medium)
+                    tvAdvertisementText.text = "Bhakti mei hi shakti hai"
+                    tvAdvertisementText.movementMethod = LinkMovementMethod.getInstance()
+                    tvAdvertisementText.highlightColor = Color.BLUE
+                }
+            }
         }
     }
 }
